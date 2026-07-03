@@ -1,0 +1,46 @@
+/** Referans görsel — ana sayfa sabit değerleri */
+export const DASHBOARD = {
+  username: 'yamann01',
+  streak: 12,
+  programDay: 3,
+  programTotal: 90,
+  startDateLabel: '03 Temmuz 2026',
+  startDateIso: '2026-07-03',
+  workoutLabel: 'BUGÜNKÜ ANTRENMAN',
+  workoutTitle: '3. Gün',
+  workoutMuscle: 'Omuz + Bacak',
+  duration: '60 DK',
+  burn: '520 KCAL',
+  weight: '91 kg',
+  weightDelta: '-0.8 kg son 7 gün',
+  waist: '70 cm',
+  waistDelta: '-1.2 cm son 7 gün',
+  water: '1.8 / 2.5 L',
+  waterPct: 72,
+  waterTodayMl: 1800,
+  caloriesToday: '2.340 kcal',
+  bodyDate: '03.07.2026',
+  bodyStats: '91 kg • bel 70 • göğüs 60',
+  successRate: 68,
+  workoutsDone: 24,
+  workoutsTotal: 36,
+  caloriesBurned: 12450,
+  caloriesGoal: 20000,
+  waterTotal: 42.6,
+  waterGoal: 67.5,
+  announcement:
+    'Yaz kampanyamız başladı! • Tüm premium üyeliklerde %20 indirim seni bekliyor!',
+  quote: 'Bugün acı çekerken, yarın kazanan sen olacaksın.',
+  author: 'ERHAN FIT',
+  dailyProgress: 72,
+  dailyTasks: [
+    { id: 'workout', label: 'Antrenman', done: true },
+    { id: 'water', label: 'Su Tüketimi', done: true },
+    { id: 'diet', label: 'Diyet', done: false },
+    { id: 'cardio', label: 'Kardiyo', done: false },
+  ],
+  streakSubtitle: 'Devam et!',
+} as const;
+
+export const WEIGHT_TREND = [91.8, 91.5, 91.3, 91.1, 90.9, 90.7, 91];
+export const WAIST_TREND = [71.2, 71.0, 70.8, 70.6, 70.4, 70.2, 70];

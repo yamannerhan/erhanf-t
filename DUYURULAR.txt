@@ -1,0 +1,3 @@
+ERHAN FIT uygulamasına hoş geldiniz!
+Yeni antrenman günü eklemek için Antrenman sekmesini kullanın.
+Duyuruları güncellemek için bu dosyayı GitHub'a yükleyin.

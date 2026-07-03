@@ -1,0 +1,21 @@
+{
+  "meals": [
+    { "id": "meal-breakfast", "title": "ERHAN FIT", "body": "Kahvaltı zamanı!", "hour": 7, "minute": 30, "enabled": true },
+    { "id": "meal-snack1", "title": "ERHAN FIT", "body": "Ara öğün zamanı!", "hour": 10, "minute": 45, "enabled": true },
+    { "id": "meal-lunch", "title": "ERHAN FIT", "body": "Öğle yemeği zamanı!", "hour": 13, "minute": 30, "enabled": true },
+    { "id": "meal-snack2", "title": "ERHAN FIT", "body": "Ara öğün zamanı!", "hour": 16, "minute": 15, "enabled": true },
+    { "id": "meal-preworkout", "title": "ERHAN FIT", "body": "Antrenman öncesi öğün!", "hour": 17, "minute": 45, "enabled": true },
+    { "id": "meal-postworkout", "title": "ERHAN FIT", "body": "Antrenman sonrası öğün!", "hour": 19, "minute": 45, "enabled": true },
+    { "id": "meal-dinner", "title": "ERHAN FIT", "body": "Akşam yemeği zamanı!", "hour": 20, "minute": 45, "enabled": true }
+  ],
+  "water": [
+    { "id": "water-08", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 8, "minute": 0, "enabled": true },
+    { "id": "water-11", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 11, "minute": 0, "enabled": true },
+    { "id": "water-13", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 13, "minute": 0, "enabled": true },
+    { "id": "water-16", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 16, "minute": 0, "enabled": true },
+    { "id": "water-18", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 18, "minute": 0, "enabled": true },
+    { "id": "water-20", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 20, "minute": 0, "enabled": true },
+    { "id": "water-22", "title": "ERHAN FIT", "body": "Su içme zamanı!", "hour": 22, "minute": 0, "enabled": true }
+  ],
+  "updatedAt": "2026-07-03T00:00:00.000Z"
+}
