@@ -31,10 +31,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSession().then((s) => {
-      setSession(s);
-      setLoading(false);
-    });
+    const timeout = setTimeout(() => setLoading(false), 2500);
+    getSession()
+      .then((s) => {
+        setSession(s);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+    return () => clearTimeout(timeout);
   }, []);
 
   const login = useCallback(async (username: string, password: string) => {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -105,19 +105,21 @@ const styles = StyleSheet.create({
     borderColor: theme.success,
   },
   brand: {
-    fontSize: 48,
-    fontWeight: '900',
+    fontSize: Platform.OS === 'android' ? 42 : 48,
+    fontWeight: Platform.OS === 'android' ? '700' : '900',
     color: theme.text,
-    letterSpacing: 8,
+    letterSpacing: Platform.OS === 'android' ? 6 : 8,
     textAlign: 'center',
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
   },
   brandFit: {
-    fontSize: 56,
-    fontWeight: '900',
+    fontSize: Platform.OS === 'android' ? 48 : 56,
+    fontWeight: Platform.OS === 'android' ? '700' : '900',
     color: theme.success,
-    letterSpacing: 12,
+    letterSpacing: Platform.OS === 'android' ? 8 : 12,
     textAlign: 'center',
     marginTop: -8,
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
   },
   tagline: {
     fontSize: 12,

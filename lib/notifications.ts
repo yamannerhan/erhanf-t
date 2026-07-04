@@ -73,8 +73,8 @@ export async function scheduleAllReminders(
 ) {
   if (Platform.OS === 'web') return false;
 
-  const granted = await requestNotificationPermissions();
-  if (!granted) return false;
+  const { status: existing } = await Notifications.getPermissionsAsync();
+  if (existing !== 'granted') return false;
 
   await Notifications.cancelAllScheduledNotificationsAsync();
 

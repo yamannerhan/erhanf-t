@@ -20,6 +20,15 @@ const AppContext = createContext<AppContextValue>({
   refresh: () => {},
 });
 
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`${label} timeout`)), ms);
+    }),
+  ]);
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [seeding, setSeeding] = useState(true);
@@ -33,31 +42,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     async function init() {
       try {
-        await getDatabase();
-        await seedDatabaseIfNeeded((msg) => {
-          if (mounted) setSeedMessage(msg);
-        });
-        if (mounted) setSeedMessage('Demo veriler yükleniyor...');
+        await withTimeout(getDatabase(), 8000, 'database');
+        await withTimeout(
+          seedDatabaseIfNeeded((msg) => {
+            if (mounted) setSeedMessage(msg);
+          }),
+          12000,
+          'seed'
+        );
+        if (mounted) setSeedMessage('Hazırlanıyor...');
         const { ensureDashboardDemoData } = await import('@/lib/demoData');
-        await ensureDashboardDemoData();
-        await scheduleAllReminders();
-        try {
-          await syncRemindersFromGithub();
-        } catch {
-          // GitHub hatırlatmaları yoksa varsayılanlar kalır
-        }
-        if (mounted) {
-          setSeeding(false);
-          setReady(true);
-        }
+        await withTimeout(ensureDashboardDemoData(), 8000, 'demo');
       } catch (e) {
         console.error('Init error:', e);
+        if (mounted) setSeedMessage('Başlatılıyor...');
+      } finally {
         if (mounted) {
-          setSeedMessage('Hata oluştu, yeniden deneyin');
           setSeeding(false);
           setReady(true);
         }
       }
+
+      scheduleAllReminders().catch(() => {});
+      syncRemindersFromGithub().catch(() => {});
     }
 
     init();
