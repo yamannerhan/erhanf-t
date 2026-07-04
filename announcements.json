@@ -1,6 +1,15 @@
 {
   "items": [
-    "ERHAN FIT v1.0.3 yayında!"
+    {
+      "text": "ERHAN FIT v1.0.3 yayında!     Sahne Senın Ha baba",
+      "color": "#60A5FA",
+      "bold": false
+    },
+    {
+      "text": "ADANA LI ERHAN",
+      "color": "#FFC400",
+      "bold": false
+    }
   ],
-  "updatedAt": "2026-07-03T22:57:00.112Z"
+  "updatedAt": "2026-07-04T20:52:25.890Z"
 }
