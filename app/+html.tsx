@@ -22,9 +22,13 @@ export default function Root({ children }: { children: ReactNode }) {
 const responsiveBackground = `
 html, body {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
   margin: 0;
   padding: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow-x: hidden;
   background: #05070D;
 }
 body {
@@ -34,7 +38,13 @@ body {
 #root {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow-x: hidden;
   background: linear-gradient(180deg, #05070D 0%, #080B14 50%, #101426 100%);
+}
+img, [data-expo-image] {
+  object-fit: cover;
+  object-position: center;
 }
 `;

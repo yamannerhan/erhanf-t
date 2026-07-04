@@ -95,6 +95,7 @@ export function WaterGoalCard() {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
+    alignSelf: 'stretch',
     flexDirection: 'column',
     backgroundColor: '#070B12',
     borderRadius: 14,

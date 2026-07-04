@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { HERO_MAX_HEIGHT } from '@/lib/homeLayout';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +16,9 @@ interface DashboardHeroCardProps {
 }
 
 export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
+  const { width } = useWindowDimensions();
+  const scale = Math.min(Math.max(width / 390, 0.88), 1.15);
+  const cardH = Math.min(HERO_MAX_HEIGHT, Math.round(176 * scale));
   const [slide, setSlide] = useState(1);
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.card}>
+      <View style={[styles.card, { height: cardH, maxHeight: HERO_MAX_HEIGHT }]}>
         <View style={styles.base} />
 
         <Image source={HERO_IMAGE} style={styles.heroImage} resizeMode="cover" />
@@ -50,10 +54,10 @@ export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
             <Text style={styles.label}>{DASHBOARD.workoutLabel}</Text>
           </View>
 
-          <Text style={styles.dayTitle} numberOfLines={1}>
+          <Text style={[styles.dayTitle, { fontSize: Math.round(22 * scale), lineHeight: Math.round(24 * scale) }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {title}
           </Text>
-          <Text style={styles.muscle} numberOfLines={1}>
+          <Text style={[styles.muscle, { fontSize: Math.round(11 * scale) }]} numberOfLines={1}>
             {muscle}
           </Text>
 
@@ -81,7 +85,7 @@ export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
           </Pressable>
         </View>
 
-        <Pressable style={styles.panel} onPress={() => router.push('/start-date' as never)}>
+        <Pressable style={[styles.panel, { width: width < 380 ? '28%' : '31%', minWidth: width < 360 ? 88 : 100 }]} onPress={() => router.push('/start-date' as never)}>
           <LinearGradient
             colors={['rgba(10,12,22,0.92)', 'rgba(6,8,16,0.8)']}
             style={styles.panelInner}>
@@ -89,15 +93,15 @@ export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
               <Text style={styles.panelTitle}>SPORA BAŞLAMA{'\n'}TARİHİ</Text>
               <View style={styles.dateRow}>
                 <Ionicons name="calendar-outline" size={10} color="#CBD5E1" />
-                <Text style={styles.panelDate} numberOfLines={1}>
+                <Text style={styles.panelDate} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
                   {DASHBOARD.startDateLabel}
                 </Text>
               </View>
             </View>
 
-            <View style={styles.ringSection}>
+            <View style={[styles.ringSection, { height: Math.round(46 * scale) }]}>
               <ProgressRing
-                size={54}
+                size={Math.round(46 * scale)}
                 stroke={4}
                 progress={DASHBOARD.programDay / DASHBOARD.programTotal}
                 color="#A855F7">
@@ -132,21 +136,21 @@ export function DashboardHeroCard({ todayDay }: DashboardHeroCardProps) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1 },
+  wrap: { width: '100%' },
   card: {
-    flex: 1,
     borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(138,43,255,0.42)',
     backgroundColor: '#05050c',
+    width: '100%',
   },
   base: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#000',
   },
   heroImage: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     width: '100%',
     height: '100%',
   },
@@ -160,10 +164,11 @@ const styles = StyleSheet.create({
   },
   left: {
     position: 'absolute',
-    left: 12,
+    left: 10,
     top: 0,
     bottom: 0,
-    width: '48%',
+    width: '52%',
+    maxWidth: '58%',
     justifyContent: 'center',
     zIndex: 2,
     paddingRight: 4,
@@ -183,18 +188,18 @@ const styles = StyleSheet.create({
   },
   dayTitle: {
     color: '#fff',
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '900',
     marginTop: 4,
-    lineHeight: 30,
+    lineHeight: 24,
   },
   muscle: {
     color: 'rgba(248,250,252,0.92)',
-    fontSize: 13,
-    marginTop: 3,
+    fontSize: 11,
+    marginTop: 2,
     fontWeight: '600',
   },
-  chips: { flexDirection: 'row', gap: 6, marginTop: 8 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 6 },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -212,10 +217,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    marginTop: 10,
-    paddingVertical: 11,
-    borderRadius: 14,
+    marginTop: 8,
+    paddingVertical: 8,
+    borderRadius: 12,
     alignSelf: 'stretch',
+    maxWidth: '100%',
     shadowColor: '#FF6B35',
     shadowOpacity: 0.55,
     shadowRadius: 14,
@@ -225,12 +231,10 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.92, transform: [{ scale: 0.98 }] },
   panel: {
     position: 'absolute',
-    right: 10,
+    right: 8,
     top: 6,
     bottom: 6,
-    width: '31%',
-    minWidth: 110,
-    maxWidth: 128,
+    maxWidth: 120,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,

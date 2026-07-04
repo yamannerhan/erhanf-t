@@ -4,6 +4,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import 'react-native-reanimated';
 
 import { AppProvider, useApp } from '@/components/AppProvider';
@@ -133,6 +134,7 @@ function RootContent() {
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
+    ...Ionicons.font,
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 

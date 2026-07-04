@@ -16,7 +16,10 @@ export default function TabLayout() {
           backgroundColor: 'transparent',
           borderTopWidth: 0,
           elevation: 0,
-          height: 78,
+          height: 82,
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
       }}>
       <Tabs.Screen name="index" options={{ title: 'Ana Sayfa' }} />

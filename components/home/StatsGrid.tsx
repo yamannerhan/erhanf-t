@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { router } from 'expo-router';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import { ProgressRing } from '@/components/ProgressRing';
@@ -115,12 +115,15 @@ const CARDS = [
 ];
 
 export function StatsGrid() {
+  const { width } = useWindowDimensions();
+  const wide = width >= 400;
+
   return (
-    <View style={styles.grid}>
+    <View style={[styles.grid, wide ? styles.gridWide : styles.gridNarrow]}>
       {CARDS.map((c) => (
         <Pressable
           key={c.key}
-          style={({ pressed }) => [styles.cell, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.cell, wide ? styles.cellWide : styles.cellNarrow, pressed && styles.pressed]}
           onPress={() => router.push(c.route as never)}>
           <View
             style={[
@@ -150,22 +153,29 @@ export function StatsGrid() {
 
 const styles = StyleSheet.create({
   grid: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: 5,
-    minHeight: 0,
+    width: '100%',
   },
-  cell: { flex: 1, minWidth: 0, alignSelf: 'stretch', height: '100%' },
+  gridWide: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  gridNarrow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  cell: { minWidth: 0 },
+  cellWide: { flex: 1 },
+  cellNarrow: { width: '47.5%', flexGrow: 1 },
   pressed: { opacity: 0.9, transform: [{ scale: 0.98 }] },
   card: {
     backgroundColor: CARD_BG,
     borderRadius: 15,
     borderWidth: 1,
-    paddingHorizontal: 6,
-    paddingTop: 7,
-    paddingBottom: 8,
-    flex: 1,
-    minHeight: 0,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 10,
+    minHeight: 88,
     overflow: 'hidden',
     justifyContent: 'space-between',
     shadowOffset: { width: 0, height: 2 },

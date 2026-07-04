@@ -2,7 +2,7 @@
   "expo": {
     "name": "ERHAN FIT",
     "slug": "erhan-fit",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "erhanfit",
@@ -13,7 +13,7 @@
     },
     "android": {
       "package": "com.erhan.fit",
-      "versionCode": 6,
+      "versionCode": 8,
       "permissions": [
         "REQUEST_INSTALL_PACKAGES",
         "INTERNET"

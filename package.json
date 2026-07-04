@@ -1,7 +1,7 @@
 {
   "name": "fitness",
   "main": "expo-router/entry",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@react-native-community/slider": "5.2.0",

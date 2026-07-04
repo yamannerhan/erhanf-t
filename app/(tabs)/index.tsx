@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '@/components/AppProvider';
 import { BodySimulationCard } from '@/components/home/BodySimulationCard';
 import { CompactProgressCard } from '@/components/home/CompactProgressCard';
-import { DailyProgressCard } from '@/components/home/DailyProgressCard';
 import { DashboardHeroCard } from '@/components/home/DashboardHeroCard';
 import { HomeAnnouncementBar } from '@/components/home/HomeAnnouncementBar';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { MotivationCard } from '@/components/home/MotivationCard';
 import { ShortcutGrid } from '@/components/home/ShortcutGrid';
 import { StatsGrid } from '@/components/home/StatsGrid';
-import { TodayPlan } from '@/components/home/TodayPlan';
-import { WaterGoalCard } from '@/components/home/WaterGoalCard';
+import { CONTENT_BOTTOM_PAD, HOME_GAP, PAIR_MIN_HEIGHT, useHomeLayout } from '@/lib/homeLayout';
 import { DASHBOARD } from '@/lib/dashboardDefaults';
 import {
   getFirstMeasurement,
@@ -21,23 +19,10 @@ import {
 } from '@/lib/database';
 import type { BodyMeasurement, WorkoutDay } from '@/lib/types';
 
-function Slot({
-  flex,
-  children,
-  row,
-}: {
-  flex: number;
-  children: ReactNode;
-  row?: boolean;
-}) {
-  return (
-    <View style={[styles.slot, { flex }, row && styles.slotRow]}>{children}</View>
-  );
-}
-
 export default function HomeScreen() {
   const { ready, refreshKey } = useApp();
   const insets = useSafeAreaInsets();
+  const layout = useHomeLayout();
   const [days, setDays] = useState<WorkoutDay[]>([]);
   const [latest, setLatest] = useState<BodyMeasurement | null>(null);
   const [first, setFirst] = useState<BodyMeasurement | null>(null);
@@ -65,110 +50,78 @@ export default function HomeScreen() {
   if (!ready) return null;
 
   return (
-    <View style={styles.root}>
-      <View
-        style={[
-          styles.screen,
-          { paddingTop: insets.top + 1, paddingBottom: insets.bottom + 52 },
-        ]}>
+    <View
+      style={[
+        styles.root,
+        {
+          paddingTop: insets.top + 4,
+          paddingBottom: insets.bottom + CONTENT_BOTTOM_PAD,
+          paddingHorizontal: layout.padH,
+        },
+      ]}>
+      <View style={styles.shrink}>
         <HomeHeader />
+      </View>
+
+      <View style={styles.shrink}>
         <HomeAnnouncementBar />
+      </View>
 
-        <View style={styles.body}>
-          <Slot flex={20}>
-            <DashboardHeroCard todayDay={todayDay} />
-          </Slot>
+      <View style={styles.heroSlot}>
+        <DashboardHeroCard todayDay={todayDay} />
+      </View>
 
-          <Slot flex={9}>
-            <StatsGrid />
-          </Slot>
+      <View style={styles.shrink}>
+        <StatsGrid />
+      </View>
 
-          <Slot flex={16} row>
-            <BodySimulationCard first={first} latest={latest} />
-            <CompactProgressCard />
-          </Slot>
-
-          <Slot flex={9}>
-            <ShortcutGrid />
-          </Slot>
-
-          <Slot flex={32}>
-            <View style={styles.bottomWrap}>
-              <View style={styles.bottomRow}>
-                <View style={styles.bottomCol}>
-                  <TodayPlan />
-                </View>
-                <View style={styles.bottomCol}>
-                  <WaterGoalCard />
-                </View>
-                <View style={styles.bottomCol}>
-                  <DailyProgressCard />
-                </View>
-              </View>
-              <View style={styles.quoteRow}>
-                <View style={styles.quoteSpacerTop} />
-                <MotivationCard />
-                <View style={styles.quoteSpacerBottom} />
-              </View>
-            </View>
-          </Slot>
+      <View style={[styles.pairRow, styles.flex1, { minHeight: PAIR_MIN_HEIGHT }]}>
+        <View style={styles.pairCol}>
+          <BodySimulationCard first={first} latest={latest} />
         </View>
+        <View style={styles.pairCol}>
+          <CompactProgressCard />
+        </View>
+      </View>
+
+      <View style={styles.shrink}>
+        <ShortcutGrid />
+      </View>
+
+      <View style={styles.shrink}>
+        <MotivationCard />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#05070A', overflow: 'hidden' },
-  screen: {
+  root: {
     flex: 1,
-    paddingHorizontal: 10,
-  },
-  body: {
-    flex: 1,
-    gap: 4,
-    minHeight: 0,
-  },
-  slot: {
-    minHeight: 0,
+    backgroundColor: '#05070A',
     overflow: 'hidden',
+    gap: HOME_GAP,
   },
-  slotRow: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    gap: 5,
+  shrink: {
+    flexShrink: 0,
   },
-  bottomWrap: {
+  heroSlot: {
+    flexShrink: 1,
+    minHeight: 0,
+  },
+  flex1: {
     flex: 1,
-    flexDirection: 'column',
     minHeight: 0,
   },
-  bottomRow: {
-    flex: 62,
+  pairRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    gap: 4,
-    minHeight: 0,
-    marginBottom: 4,
+    gap: HOME_GAP,
   },
-  quoteRow: {
-    flex: 38,
-    minHeight: 56,
-    minWidth: 0,
-    flexDirection: 'column',
-  },
-  quoteSpacerTop: {
-    flex: 1.35,
-    minHeight: 4,
-  },
-  quoteSpacerBottom: {
-    flex: 0.45,
-    minHeight: 2,
-  },
-  bottomCol: {
+  pairCol: {
     flex: 1,
     minWidth: 0,
     minHeight: 0,
-    overflow: 'hidden',
+    alignSelf: 'stretch',
   },
 });

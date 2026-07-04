@@ -7,8 +7,6 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
 import Animated, {
   Easing,
   interpolate,
@@ -19,8 +17,15 @@ import Animated, {
   type AnimatedStyle,
 } from 'react-native-reanimated';
 
-const PURPLE_COLORS = ['#F5E6FF', '#C084FC', '#9333EA', '#6B21FF'] as const;
-const GOLD_COLORS = ['#FFFBEB', '#FFE566', '#FFC400', '#F59E0B'] as const;
+const PURPLE = '#B47AFF';
+const GOLD = '#FFD024';
+const PURPLE_SOFT = '#9333EA';
+const GOLD_SOFT = '#F59E0B';
+
+const PURPLE_GRADIENT = ['#F5E6FF', '#C084FC', '#9333EA', '#6B21FF'] as const;
+const GOLD_GRADIENT = ['#FFFBEB', '#FFE566', '#FFC400', '#F59E0B'] as const;
+
+const isNative = Platform.OS === 'android' || Platform.OS === 'ios';
 
 function webGradientStyle(colors: readonly string[]): TextStyle {
   return {
@@ -32,74 +37,105 @@ function webGradientStyle(colors: readonly string[]): TextStyle {
   };
 }
 
-function GradientWord({
+function brandFont(base: TextStyle): TextStyle {
+  return {
+    ...base,
+    fontWeight: Platform.OS === 'android' ? '700' : '900',
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
+  };
+}
+
+function NativeBrandWord({
   text,
-  colors,
-  glowColor,
+  color,
+  softColor,
   fontStyle,
-  shimmerStyle,
-  floatStyle,
+  wrapStyle,
 }: {
   text: string;
-  colors: readonly string[];
+  color: string;
+  softColor: string;
+  fontStyle: TextStyle;
+  wrapStyle?: AnimatedStyle<ViewStyle>;
+}) {
+  const styled = brandFont(fontStyle);
+
+  return (
+    <Animated.View style={[styles.wordWrap, wrapStyle]}>
+      <Text style={[styled, styles.glowText, { color: softColor }]}>{text}</Text>
+      <Text style={[styled, styles.mainText, { color }]}>{text}</Text>
+    </Animated.View>
+  );
+}
+
+function WebBrandWord({
+  text,
+  gradientColors,
+  glowColor,
+  fontStyle,
+  wrapStyle,
+}: {
+  text: string;
+  gradientColors: readonly string[];
   glowColor: string;
   fontStyle: TextStyle;
-  shimmerStyle?: AnimatedStyle<ViewStyle>;
-  floatStyle?: AnimatedStyle<ViewStyle>;
+  wrapStyle?: AnimatedStyle<ViewStyle>;
 }) {
-  const wrapStyle = floatStyle ? [shimmerStyle, floatStyle] : shimmerStyle;
-
-  if (Platform.OS === 'web') {
-    return (
-      <Animated.View style={wrapStyle}>
-        <Text
-          style={[
-            fontStyle,
-            webGradientStyle(colors),
-            {
-              textShadowColor: glowColor,
-              textShadowOffset: { width: 0, height: 0 },
-              textShadowRadius: 12,
-            },
-          ]}>
-          {text}
-        </Text>
-      </Animated.View>
-    );
-  }
-
   return (
     <Animated.View style={[styles.wordWrap, wrapStyle]}>
       <Text
         style={[
           fontStyle,
-          styles.glowLayer,
-          { color: glowColor, textShadowColor: glowColor },
+          webGradientStyle(gradientColors),
+          {
+            textShadowColor: glowColor,
+            textShadowOffset: { width: 0, height: 0 },
+            textShadowRadius: 12,
+          },
         ]}>
         {text}
       </Text>
-      <MaskedView
-        style={styles.maskWrap}
-        maskElement={<Text style={[fontStyle, styles.maskText]}>{text}</Text>}>
-        <View style={styles.gradientStack}>
-          <LinearGradient
-            colors={[...colors]}
-            start={{ x: 0, y: 0.2 }}
-            end={{ x: 1, y: 0.8 }}
-            style={StyleSheet.absoluteFill}
-          />
-          <Animated.View style={[styles.shimmerBand, shimmerStyle]}>
-            <LinearGradient
-              colors={['transparent', 'rgba(255,255,255,0.55)', 'transparent']}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={styles.shimmerFill}
-            />
-          </Animated.View>
-          <Text style={[fontStyle, styles.maskText, styles.sizeAnchor]}>{text}</Text>
-        </View>
-      </MaskedView>
     </Animated.View>
+  );
+}
+
+function BrandWord({
+  text,
+  color,
+  softColor,
+  gradientColors,
+  glowColor,
+  fontStyle,
+  wrapStyle,
+}: {
+  text: string;
+  color: string;
+  softColor: string;
+  gradientColors: readonly string[];
+  glowColor: string;
+  fontStyle: TextStyle;
+  wrapStyle?: AnimatedStyle<ViewStyle>;
+}) {
+  if (isNative) {
+    return (
+      <NativeBrandWord
+        text={text}
+        color={color}
+        softColor={softColor}
+        fontStyle={fontStyle}
+        wrapStyle={wrapStyle}
+      />
+    );
+  }
+
+  return (
+    <WebBrandWord
+      text={text}
+      gradientColors={gradientColors}
+      glowColor={glowColor}
+      fontStyle={fontStyle}
+      wrapStyle={wrapStyle}
+    />
   );
 }
 
@@ -109,32 +145,30 @@ function useFlowAnimation() {
 
   useEffect(() => {
     flow.value = withRepeat(
-      withTiming(1, { duration: 2800, easing: Easing.linear }),
+      withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.ease) }),
       -1,
-      false
+      true
     );
     drift.value = withRepeat(
-      withTiming(1, { duration: 4200, easing: Easing.inOut(Easing.sin) }),
+      withTiming(1, { duration: 3600, easing: Easing.inOut(Easing.sin) }),
       -1,
       true
     );
   }, [flow, drift]);
 
   const shimmerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: interpolate(flow.value, [0, 1], [-48, 48]) }],
-    opacity: interpolate(flow.value, [0, 0.15, 0.5, 0.85, 1], [0.2, 0.9, 1, 0.9, 0.2]),
-  }));
-
-  const floatStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(drift.value, [0, 1], [-1.2, 1.2]) }],
+    opacity: interpolate(flow.value, [0, 0.5, 1], [0.82, 1, 0.82]),
+    transform: [
+      { translateY: interpolate(drift.value, [0, 1], [-1.5, 1.5]) },
+    ],
   }));
 
   const linesStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(flow.value, [0, 0.5, 1], [0.35, 1, 0.35]),
-    transform: [{ translateX: interpolate(flow.value, [0, 1], [0, 10]) }],
+    opacity: interpolate(flow.value, [0, 0.5, 1], [0.45, 1, 0.45]),
+    transform: [{ translateX: interpolate(flow.value, [0, 1], [0, 8]) }],
   }));
 
-  return { shimmerStyle, floatStyle, linesStyle };
+  return { shimmerStyle, linesStyle };
 }
 
 function useSignatureAnimation() {
@@ -142,51 +176,47 @@ function useSignatureAnimation() {
 
   useEffect(() => {
     pulse.value = withRepeat(
-      withTiming(1, { duration: 3200, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1, { duration: 2800, easing: Easing.inOut(Easing.ease) }),
       -1,
       true
     );
   }, [pulse]);
 
-  const shimmerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: interpolate(pulse.value, [0, 1], [-28, 28]) }],
-    opacity: interpolate(pulse.value, [0, 0.5, 1], [0.35, 0.85, 0.35]),
+  const pulseStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(pulse.value, [0, 0.5, 1], [0.8, 1, 0.8]),
   }));
 
-  const floatStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(pulse.value, [0, 0.5, 1], [0.88, 1, 0.88]),
-  }));
-
-  return { shimmerStyle, floatStyle };
+  return { pulseStyle };
 }
 
 export function BrandLogoTitle() {
-  const { shimmerStyle, floatStyle, linesStyle } = useFlowAnimation();
+  const { shimmerStyle, linesStyle } = useFlowAnimation();
   const headerFont: TextStyle = {
     fontSize: 18,
-    fontWeight: '900',
     fontStyle: 'italic',
     lineHeight: 22,
   };
 
   return (
     <View style={styles.logoRow}>
-      <GradientWord
+      <BrandWord
         text="ERHAN "
-        colors={PURPLE_COLORS}
+        color={PURPLE}
+        softColor={PURPLE_SOFT}
+        gradientColors={PURPLE_GRADIENT}
         glowColor="rgba(168,85,247,0.9)"
         fontStyle={headerFont}
-        shimmerStyle={shimmerStyle}
-        floatStyle={floatStyle}
+        wrapStyle={shimmerStyle}
       />
       <View style={styles.fitWrap}>
-        <GradientWord
+        <BrandWord
           text="FIT"
-          colors={GOLD_COLORS}
+          color={GOLD}
+          softColor={GOLD_SOFT}
+          gradientColors={GOLD_GRADIENT}
           glowColor="rgba(255,196,0,0.9)"
           fontStyle={headerFont}
-          shimmerStyle={shimmerStyle}
-          floatStyle={floatStyle}
+          wrapStyle={shimmerStyle}
         />
         <Animated.View style={[styles.motionLines, linesStyle]}>
           <View style={[styles.line, styles.line1]} />
@@ -199,61 +229,59 @@ export function BrandLogoTitle() {
 }
 
 export function BrandSignatureText({ prefix = '— ' }: { prefix?: string }) {
-  const { shimmerStyle, floatStyle } = useSignatureAnimation();
+  const { pulseStyle } = useSignatureAnimation();
   const sigFont: TextStyle = {
-    fontSize: 9,
-    fontWeight: '800',
+    fontSize: 10,
     fontStyle: 'italic',
-    lineHeight: 12,
-    letterSpacing: 0.6,
+    lineHeight: 13,
+    letterSpacing: 0.5,
   };
 
   return (
     <View style={styles.signatureRow}>
       <Text style={styles.signaturePrefix}>{prefix}</Text>
-      <GradientWord
+      <BrandWord
         text="ERHAN "
-        colors={PURPLE_COLORS}
+        color={PURPLE}
+        softColor={PURPLE_SOFT}
+        gradientColors={PURPLE_GRADIENT}
         glowColor="rgba(168,85,247,0.85)"
         fontStyle={sigFont}
-        shimmerStyle={shimmerStyle}
-        floatStyle={floatStyle}
+        wrapStyle={pulseStyle}
       />
-      <GradientWord
+      <BrandWord
         text="FIT"
-        colors={GOLD_COLORS}
+        color={GOLD}
+        softColor={GOLD_SOFT}
+        gradientColors={GOLD_GRADIENT}
         glowColor="rgba(255,196,0,0.85)"
         fontStyle={sigFont}
-        shimmerStyle={shimmerStyle}
-        floatStyle={floatStyle}
+        wrapStyle={pulseStyle}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  logoRow: { flexDirection: 'row', alignItems: 'center' },
-  fitWrap: { flexDirection: 'row', alignItems: 'center' },
-  wordWrap: { position: 'relative' },
-  maskWrap: { flexDirection: 'row' },
-  gradientStack: {
-    overflow: 'hidden',
+  logoRow: {
     flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 0,
   },
-  shimmerBand: {
-    ...StyleSheet.absoluteFillObject,
-    width: '180%',
-    left: '-40%',
+  fitWrap: { flexDirection: 'row', alignItems: 'center' },
+  wordWrap: {
+    flexShrink: 0,
+    position: 'relative',
   },
-  shimmerFill: { flex: 1 },
-  glowLayer: {
+  glowText: {
     position: 'absolute',
-    textShadowRadius: 16,
-    textShadowOffset: { width: 0, height: 0 },
-    opacity: 0.5,
+    left: 0,
+    top: 0,
+    opacity: 0.42,
   },
-  maskText: { backgroundColor: 'transparent' },
-  sizeAnchor: { opacity: 0 },
+  mainText: {
+    position: 'relative',
+  },
   motionLines: { marginLeft: 3, justifyContent: 'center', gap: 2 },
   line: {
     height: 2,
@@ -267,12 +295,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 5,
+    marginTop: 4,
+    flexShrink: 0,
   },
   signaturePrefix: {
     color: '#71717A',
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.4,
+    lineHeight: 13,
+    ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
   },
 });
