@@ -12,5 +12,19 @@
     }
   ],
   "quote": "ERHAN NE OLURSA OLSUN PES ETME",
-  "updatedAt": "2026-07-05T09:42:04.449Z"
+  "tipCards": {
+    "diet": {
+      "text": "Düzenli ve dengeli beslenme, antrenmandan %30 daha fazla sonuç almanı sağlar."
+    },
+    "workout": {
+      "text": "Bugün dinlenme günü. Yarın 4. gün antrenmanın için enerjini topla!",
+      "cta": "Planı Gör"
+    },
+    "aiCoach": {
+      "title": "AI Coach",
+      "message": "Bugün protein hedefinin %80'ini tamamladın.",
+      "cta": "Devam Et"
+    }
+  },
+  "updatedAt": "2026-07-05T15:19:42.275Z"
 }
